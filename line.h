@@ -4,6 +4,7 @@ class line
 {
 	string add1, add2;
 	instruction inst;
+	
 public:
 	line();
 	~line();

@@ -10,6 +10,7 @@ line::line()
 line::~line()
 {
 }
+
 void line::set_line(vector<string> vec){
 	for (int i = 0; i < vec.size(); i++){
 		switch (i){
