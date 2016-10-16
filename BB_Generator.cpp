@@ -1,11 +1,12 @@
 // BB_Generator.cpp : Defines the entry point for the console application.
 
 #include "stdafx.h"
-#include "instruction.h";
-#include "line.h";
-#include "bblock.h";
-#include "bb_check.h";
-#include "Roll_Call.h";
+#include "instruction.h"
+#include "line.h"
+#include "bblock.h"
+#include "bb_check.h"
+#include "Roll_Call.h"
+#include "simulator.h"
 
 fstream fs;
 ofstream arq("bb_out.txt");
@@ -74,16 +75,18 @@ line get_myline(string str){
 		str.erase(0, a);
 		if (str.empty()) break;
 		str = fix_line(str);
-		if (str.length() == 1 || str.front()=='<')
+		//if (str.length() == 1 || str.front()=='<')
+		if (str.front()=='<')
 			str.clear();
 		i++;}
 	myline.set_line(temp);
 	return myline;}
 
-void print_program(list<line> vec){
+void print_line_list(list<line> vec){
 	for (line t:vec){
 		cout << t.get_add1() << "    ";
-		cout << t.get_str_inst() << endl;
+		cout << t.get_str_inst() << "    ";
+		cout << t.get_ntimes() << endl;
 	}
 	cout << "Size: "<<vec.size()<< endl;
 }
@@ -94,7 +97,7 @@ void print_bblist(list<bblock> block_lst){
 	for (bblock i: block_lst){
 		n++;
 		cout << "Bloco " << n << endl;
-		print_program(i.get_instructions());
+		print_line_list(i.get_instructions());
 		strvec = i.get_call_for();
 		if (!strvec.empty()){
 			cout << "Call for: " << strvec;
@@ -104,7 +107,7 @@ void print_bblist(list<bblock> block_lst){
 	}
 }
 
-void export_program(list<line> vec){
+void export_line_list(list<line> vec){
 	for (line t:vec){
 		arq << t.get_add1() << " " << t.get_add2() << " " << t.get_str_inst() << endl;
 	}
@@ -117,7 +120,7 @@ void export_bblist(list<bblock> block_list){
 	for (bblock i:block_list){
 		n++;
 		arq << " Bloco " << n << endl;
-		export_program(i.get_instructions());
+		export_line_list(i.get_instructions());
 		strvec = i.get_call_for();
 		if (!strvec.empty()){
 			arq << "Call for: " << strvec;
@@ -153,7 +156,7 @@ list<line> filter_linked_branch(list<line> program){
 }
 
 int _tmain(int argc, _TCHAR* argv[]){
-	int a;
+//	int a;
 	string str = "teste", aux;
 	list<line> program, branches, linked_branches;
 	list<bblock> block_list;
@@ -167,16 +170,25 @@ int _tmain(int argc, _TCHAR* argv[]){
 		}
 		program.push_back(get_myline(str));
 	}
-	print_program(program);
-	branches = filter_normal_branch(program);
-	linked_branches = filter_linked_branch(program);
-	//print_program(branches);	
-	//print_program(linked_branches);
-	block_list = bb_creator(program, branches);
-	list<calling> calls = create_call_list(branches);
-	//bblist_check(block_list, program);
-	print_bblist(block_list);
-	export_bblist(block_list);
+
+	//print_line_list(program);
+	//system("PAUSE");
+	program = simulation(program);
+	print_line_list(program);
+
+//	branches = filter_normal_branch(program);
+//	linked_branches = filter_linked_branch(program);
+//	//print_program(branches);	
+//	//print_program(linked_branches);
+//	block_list = bb_creator(program, branches);
+//	
+//	list<calling> calls = create_call_list(branches);
+////	print_call_list(calls);
+//	export_call_list(calls);
+//	block_list = bblist_check(block_list, program);
+//	//print_bblist(block_list);
+//	
+//	export_bblist(block_list);
 	system("PAUSE");
 	return 0;
 }

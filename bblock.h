@@ -1,6 +1,6 @@
 #pragma once
-#include"stdafx.h";
-#include"line.h";
+#include"stdafx.h"
+#include"line.h"
 class bblock
 {
 	list<line> instructions;

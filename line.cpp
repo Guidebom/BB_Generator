@@ -4,11 +4,24 @@
 
 line::line()
 {
+	ntimes = 0;
 }
 
 
 line::~line()
 {
+}
+
+void line::set_ntimes(int n){
+	ntimes = n;
+}
+
+void line::increment_ntimes(){
+	ntimes++;
+}
+
+int line::get_ntimes(){
+	return ntimes;
 }
 
 void line::set_line(vector<string> vec){
