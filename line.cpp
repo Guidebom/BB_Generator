@@ -1,14 +1,28 @@
 #include "stdafx.h"
+#include <iostream>
 #include "line.h"
 
 
 line::line()
 {
+	ntimes = 0;
 }
 
 
 line::~line()
 {
+}
+
+void line::set_ntimes(int n){
+	ntimes = n;
+}
+
+void line::increment_ntimes(){
+	ntimes++;
+}
+
+int line::get_ntimes(){
+	return ntimes;
 }
 
 void line::set_line(vector<string> vec){
@@ -56,4 +70,10 @@ string line::get_str_inst(){
 
 instruction line::get_inst(){
 	return inst;
+}
+
+void line::print_line(){
+	cout << get_add1() << "    ";
+	cout << get_str_inst() << "    ";
+	cout << get_ntimes() << endl;
 }

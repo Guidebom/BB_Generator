@@ -1,27 +1,6 @@
 #include "stdafx.h"
 #include"bb_check.h";
 
-list<string> called, found, new_bb_headers, all_addr;
-
-void remove_found_from_called(){
-	//remove endereços encontrados da lista de endereços chamados
-	bool found_flag = false;
-	int j, i;
-	string aux;
-	for (string i:found){
-		for (string j: called){
- 			if (i == j){
-				found_flag = true;
-				aux = j;
-			}
-		}
-		if (found_flag == true){
-			called.remove(aux);
-			found_flag = false;
-		}
-	}
-}
-
 void print_list_of_str(list<string> str){
 	for (string i:str){
 		cout << i << endl;
@@ -29,44 +8,46 @@ void print_list_of_str(list<string> str){
 	cout << "Size: " << str.size() << endl << endl;
 }
 
-void load_all_addr(list<line> lst){
-	for (line i:lst){
-		all_addr.push_back(i.get_add1());
-	}
-}
-void filter_called(){
-	list<string> str;
-	if (!all_addr.empty()){
-		for (string i : called){
-			for (string j : all_addr){
-				if (j == i)
-					str.push_back(i);
+list<line> insert_linked_code(line top, list<line> program){
+	bool found_flag=0;
+	list<line> temp;
+	for (line i : program){
+		if (top.get_inst().get_op().back() == i.get_add1())
+			found_flag = true;
+		if (found_flag == true){
+			temp.push_back(i);
+			if (i.get_inst().get_inst() == "jr"){
+				break;
+			}
+			if (i.get_inst().get_inst() == "jal"){
+				list<line> temp_list = insert_linked_code(i, program);
+				for (line i : temp_list){
+					temp.push_back(i);
+				}
+				temp_list.clear();
 			}
 		}
-		called.clear();
-		called = str;
 	}
+	return temp;
 }
 
-void bblist_check(list<bblock> lst, list<line> program){
-	//Confere blocos criados para criar novos blocos se necessário
-	vector<line> temp;
-	string str1, str2;
-	for (bblock i:lst){
-		called.push_back(i.get_call_for());
-	}
-	load_all_addr(program);
-	filter_called();
-	for (string j:called){
-		str1 = j;
-		for (bblock i : lst){
-			str2 = i.get_fst_addr();
-			if (str1 == str2){
-				found.push_back(str1);
+list<bblock> bblist_check(list<bblock> lst, list<line> program){
+	list<line> my_list, temp_list;
+	list<bblock> temp;
+	for (bblock b : lst){
+		for (line l : b.get_instructions()){
+			my_list.push_back(l);
+			if (l.get_inst().get_inst() == "jal"){
+				temp_list = insert_linked_code(l, program);
+				for (line i : temp_list){
+					my_list.push_back(i);
+				}
+				temp_list.clear();
 			}
 		}
+		b.set_instructions(my_list);
+		my_list.clear();
+		temp.push_back(b);
 	}
-	print_list_of_str(called);
-	remove_found_from_called();
-	print_list_of_str(called);
+	return temp;
 }
