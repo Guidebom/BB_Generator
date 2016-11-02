@@ -4,17 +4,17 @@
 class my_register
 {
 	string name, value, num;
-	int ivalue;
+	__int64 ivalue;
 public:
 	my_register();
 	~my_register();
 	void set_name(string n);
 	void set_value(string n);
-	void set_ivalue(int n);
+	void set_ivalue(double n);
 	void set_num(string n);
 	string get_num();
 	string get_name();
 	string get_value();
-	int get_ivalue();
+	__int64 get_ivalue();
 };
 

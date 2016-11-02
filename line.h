@@ -20,5 +20,6 @@ public:
 	string get_add2();
 	string get_str_inst();
 	instruction get_inst();
+	void print_line();
 };
 

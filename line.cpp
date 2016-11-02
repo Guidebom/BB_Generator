@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <iostream>
 #include "line.h"
 
 
@@ -69,4 +70,10 @@ string line::get_str_inst(){
 
 instruction line::get_inst(){
 	return inst;
+}
+
+void line::print_line(){
+	cout << get_add1() << "    ";
+	cout << get_str_inst() << "    ";
+	cout << get_ntimes() << endl;
 }

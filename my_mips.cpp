@@ -1,25 +1,25 @@
 #include "stdafx.h"
 #include "my_mips.h"
+#include "n_to_hex.h"
 
 template< typename T >
-std::string int_to_hex(T i)
+string int_to_hex(T i)
 {
-	std::stringstream stream;
-	stream << std::hex << i;
+	stringstream stream;
+	stream << hex << i;
 	string s = stream.str();
-	while (s.length() < 4)
-		s = "0" + s;
+	//while (s.length() < 8)
+	//	s = "0" + s;
 	return s;
 }
 
 my_mips::my_mips()
 {
-	hig_pc = 0;
-	low_pc = 0;
-	program_counter = int_to_hex<int>(hig_pc) +int_to_hex<int>(low_pc);
+	program_counter = int_to_hex<int>(0);
 	my_register r;
 	for (int i = 0; i <=31; i++)
 	{
+		r.set_value("0");
 		switch (i){
 		case 0:
 			r.set_name("zero");
@@ -107,6 +107,7 @@ my_mips::my_mips()
 			break;
 		case 28:
 			r.set_name("gp");
+			r.set_value("268468224");
 			break;
 		case 29:
 			r.set_name("sp");
@@ -119,11 +120,9 @@ my_mips::my_mips()
 			break;
 		}
 		r.set_num("$" + to_string(i));
-		r.set_value("0");
 		regs.push_back(r);
 	}	
 }
-
 
 my_mips::~my_mips()
 {
@@ -138,36 +137,23 @@ list<my_register> my_mips::get_regs(){
 
 void my_mips::set_program_counter(string s){
 	program_counter = s;
-	string low = s, hig = s;
-	for (int i = 0; i < (s.length() / 2); i++){
-		low = low.erase(0, 1);
-		hig = hig.erase(hig.length() - 1, 1);
-	}
-	hig_pc = stoi(hig, nullptr, 16);
-	low_pc = stoi(low, nullptr, 16);
+	iprogram_counter = str_hex_to_int(s);
 }
-void my_mips::set_hig_pc(int l){
-	hig_pc = l;
-	program_counter = int_to_hex<int>(hig_pc) + int_to_hex<int>(low_pc);
+
+void my_mips::set_iprogram_counter(__int64 d){
+	iprogram_counter = d;
+	string s = int_to_hex<__int64>(d);
+	program_counter = s;
 }
-void my_mips::set_low_pc(int l){
-	low_pc = l;
-	program_counter = int_to_hex<int>(hig_pc) +int_to_hex<int>(low_pc);
+
+__int64 my_mips::get_iprogram_counter(){
+	return iprogram_counter;
 }
+
 void my_mips::increment_pc(){
-	low_pc += 4;
-	if (low_pc > 0xFFFF){
-		hig_pc++;
-		low_pc -= 0xFFFF;
-	}
-	program_counter = int_to_hex<int>(hig_pc) +int_to_hex<int>(low_pc);
+	iprogram_counter += 4;
+	program_counter = int_to_hex<__int64>(iprogram_counter);
 }
 string my_mips::get_program_counter(){
 	return program_counter;
-}
-int my_mips::get_hig_pc(){
-	return hig_pc;
-}
-int my_mips::get_low_pc(){
-	return low_pc;
 }
